@@ -10,6 +10,17 @@
  * @param len 
  */
 void dump_mem(const void *ptr, int len);
+
+
+/**
+ * @brief 打印字符串，每行block_len个字符
+ * 
+ * @param str 
+ * @param str_len 
+ * @param block_len 
+ */
+void print_string(const char *str, int str_len, int block_len);
+
 /**
  * @brief 16进制字符串转数组
  * 

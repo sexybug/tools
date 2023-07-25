@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "test.h"
 
 /**
  * 提取0x字符串中的16进制字符。提取每个"0x"后的两个16进制字符。
@@ -41,17 +42,18 @@ void extract_any_hex(const char *str, int str_len, char *out, int *out_len)
 int contain_0x(const char *str, int str_len)
 {
     int i = 0;
-    while (i < str_len)
+    while (i < str_len - 1)
     {
         if (str[i] == '0' && str[i + 1] == 'x')
         {
-            break;
+            return 1;
         }
         else
         {
             i++;
         }
     }
+    return 0;
 }
 
 /**
@@ -117,7 +119,7 @@ int main()
         out[out_len] = 0;
 
         printf("hex-number bytes: %d\n", out_len / 2);
-        printf("%s\n", out);
+        print_string(out, out_len, 64);
     }
 
     return 0;

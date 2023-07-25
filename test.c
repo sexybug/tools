@@ -10,10 +10,23 @@ void dump_mem(const void *ptr, int len)
         {
             // printf(" ");
         }
-        if (i % 16 == 0 && i != 0)
+        if (i % 32 == 0 && i != 0)
             printf("\n");
         printf("%02X", *((uint8_t *)ptr + i));
         // printf("%02x ", *((uint8_t *)ptr + i));
+    }
+    printf("\n");
+}
+
+void print_string(const char *str, int str_len, int block_len)
+{
+    for (int i = 0; i < str_len; i++)
+    {
+        if (i != 0 && i % block_len == 0)
+        {
+            printf("\n");
+        }
+        printf("%c", str[i]);
     }
     printf("\n");
 }
