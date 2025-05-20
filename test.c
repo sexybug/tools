@@ -24,7 +24,7 @@ void print_string(const char *str, int str_len, int block_len)
     {
         if (i != 0 && i % block_len == 0)
         {
-            printf("\n");
+            printf("  ");
         }
         printf("%c", str[i]);
     }

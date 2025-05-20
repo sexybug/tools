@@ -2,19 +2,45 @@
 #include <string.h>
 #include "test.h"
 
+// 判断字符是否为十六进制字符
+int is_hex_char(char c)
+{
+    // 如果字符在0-9之间，或者a-f之间，或者A-F之间，则返回1，否则返回0
+    if ((c >= '0' && c <= '9') ||
+        (c >= 'a' && c <= 'f') ||
+        (c >= 'A' && c <= 'F'))
+    {
+        return 1;
+    }
+    return 0;
+}
+
 /**
- * 提取0x字符串中的16进制字符。提取每个"0x"后的两个16进制字符。
+ * 提取0x字符串中的16进制字符。提取每个"0x"后的所有16进制字符，直到遇到非16进制字符。
  */
 void extract_0x_hex(const char *str, int str_len, char *out, int *out_len)
 {
+    int i = 0;
     int n = 0;
-    for (int i = 0; i < strlen(str); i++)
+    int k = 0;
+
+    // 提取0x字符串中的16进制字符
+    while(i < str_len)
     {
         if (str[i] == '0' && str[i + 1] == 'x')
         {
-            out[n] = str[i + 2];
-            out[n + 1] = str[i + 3];
-            n += 2;
+            k = 2;
+            while (is_hex_char(str[i + k]))
+            {
+                out[n] = str[i + k];
+                n++;
+                k++;
+            }
+            i += k;
+        }
+        else
+        {
+            i++;
         }
     }
     *out_len = n;
