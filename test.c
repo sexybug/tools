@@ -24,7 +24,7 @@ void print_string(const char *str, int str_len, int block_len)
     {
         if (i != 0 && i % block_len == 0)
         {
-            printf("  ");
+            printf(" ");
         }
         printf("%c", str[i]);
     }
@@ -57,4 +57,12 @@ void HexString2Hex(const char *str, int len, uint8_t *out)
     {
         out[i] = (HexChar2Int(str[i * 2]) << 4) | HexChar2Int(str[i * 2 + 1]);
     }
+}
+
+uint32_t reverse32(uint32_t n)
+{
+    return ((n & 0x000000FF) << 24) |
+           ((n & 0x0000FF00) << 8) |
+           ((n & 0x00FF0000) >> 8) |
+           ((n & 0xFF000000) >> 24);
 }

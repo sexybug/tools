@@ -130,23 +130,32 @@ void input_string(char *str, int *str_len)
 
 int main()
 {
+    // 定义两个字符数组，用于存储输入字符串和输出字符串
     char str[5000] = {0};
     char out[5000] = {0};
+    // 定义两个整型变量，用于存储输入字符串和输出字符串的长度
     int in_len = 0, out_len = 0;
 
+    // 无限循环
     while (1)
     {
+        // 提示用户输入字符串
         printf("input string:\n");
+        // 调用函数，将用户输入的字符串存储到str数组中，并返回字符串的长度
         input_string(str, &in_len);
         // printf("%s\n", str);
 
+        // 调用函数，将str数组中的字符串转换为十六进制数，并存储到out数组中，并返回转换后的字符串的长度
         extract_hex(str, strlen(str), out, &out_len);
         // 避免out没有结束符
         out[out_len] = 0;
 
+        // 输出转换后的字符串的长度
         printf("hex-number bytes: %d\n", out_len / 2);
+        // 调用函数，以64个字符为一行，输出转换后的字符串
         print_string(out, out_len, 64);
     }
 
+    // 返回0，表示程序正常结束
     return 0;
 }
