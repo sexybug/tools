@@ -1,16 +1,16 @@
 #include "test.h"
 #include <stdio.h>
-#include <stdint.h>
 
 void dump_mem(const void *ptr, int len)
 {
-    for (int i = 0; i < len; i++)
+    int i;
+    for (i = 0; i < len; i++)
     {
         if (i % 8 == 0 && i != 0)
         {
             // printf(" ");
         }
-        if (i % 32 == 0 && i != 0)
+        if (i % 16 == 0 && i != 0)
             printf("\n");
         printf("%02X", *((uint8_t *)ptr + i));
         // printf("%02x ", *((uint8_t *)ptr + i));
@@ -18,20 +18,7 @@ void dump_mem(const void *ptr, int len)
     printf("\n");
 }
 
-void print_string(const char *str, int str_len, int block_len)
-{
-    for (int i = 0; i < str_len; i++)
-    {
-        if (i != 0 && i % block_len == 0)
-        {
-            printf(" ");
-        }
-        printf("%c", str[i]);
-    }
-    printf("\n");
-}
-
-uint8_t HexChar2Int(char c)
+static inline uint8_t HexChar2Int(char c)
 {
     if (c >= '0' && c <= '9')
     {
@@ -53,16 +40,102 @@ uint8_t HexChar2Int(char c)
 
 void HexString2Hex(const char *str, int len, uint8_t *out)
 {
-    for (int i = 0; i < len; i++)
+    int i;
+    for (i = 0; i < len; i++)
     {
         out[i] = (HexChar2Int(str[i * 2]) << 4) | HexChar2Int(str[i * 2 + 1]);
     }
 }
 
-uint32_t reverse32(uint32_t n)
+/**
+ * Prints the binary representation of the given byte array.
+ *
+ * @param ptr pointer to the byte array to be printed
+ * @param len length of the byte array
+ *
+ * @return void
+ *
+ * @throws None
+ */
+void print_binary(const uint8_t *ptr, int len)
 {
-    return ((n & 0x000000FF) << 24) |
-           ((n & 0x0000FF00) << 8) |
-           ((n & 0x00FF0000) >> 8) |
-           ((n & 0xFF000000) >> 24);
+    int i;
+    for (i = 0; i < len; i++)
+    {
+        for (int j = 7; j >= 0; j--)
+        {
+            printf("%d", (ptr[i] >> j) & 0x01);
+        }
+        printf(" ");
+    }
+    printf("\n");
+}
+
+void print_u8(const char *title, const uint8_t *ptr, size_t len)
+{
+    size_t i;
+    printf("uint8_t %s[%d] = {\n", title, len);
+    for (i = 0; i < len; i++)
+    {
+        if (i % 16 == 0)
+        {
+            printf("    ");
+        }
+        printf("0x%02x, ", ptr[i]);
+        if ((i + 1) % 16 == 0 || ((i + 1) == len && (i + 1) % 16 != 0))
+        {
+            printf("\n");
+        }
+    }
+    printf("};\n\n");
+}
+
+void print_u32(const char *title, const uint32_t *ptr, size_t len)
+{
+    size_t i;
+    printf("uint32_t %s[%d] = {\n", title, len);
+    for (i = 0; i < len; i++)
+    {
+        if (i % 8 == 0)
+        {
+            printf("    ");
+        }
+        printf("0x%08x, ", ptr[i]);
+        if ((i + 1) % 8 == 0 || ((i + 1) == len && (i + 1) % 8 != 0))
+        {
+            printf("\n");
+        }
+    }
+    printf("};\n\n");
+}
+
+void print_u64(const char *title, const uint64_t *ptr, size_t len)
+{
+    size_t i;
+    printf("uint64_t %s[%d] = {\n", title, len);
+    for (i = 0; i < len; i++)
+    {
+        if (i % 4 == 0)
+        {
+            printf("    ");
+        }
+        printf("0x%016lx, ", ptr[i]);
+        if ((i + 1) % 4 == 0 || ((i + 1) == len && (i + 1) % 4 != 0))
+        {
+            printf("\n");
+        }
+    }
+    printf("};\n\n");
+}
+
+void print_bn(const char *title, const cc_bn_digit_t *bn, size_t len)
+{
+    int i;
+    printf("%s (%d bytes) = {", title, len * CC_BN_DIGIT_BYTES);
+
+    for (i = len - 1; i >= 0; i--)
+    {
+        printf("%08x", bn[i]);
+    }
+    printf("}\n");
 }

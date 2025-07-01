@@ -1,12 +1,14 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "cc_bn.h"
+#include "cc_basis_convert.h"
 
-typedef cc_bn_digit_t cc_bn_t[12];
+#define BN_WORD_LEN 12
+
+typedef cc_bn_digit_t cc_bn_t[BN_WORD_LEN];
 
 // ECC359正规基转多项式基映射表
-uint32_t BM_359[359 * 12] = {
+uint32_t BM_359[359 * BN_WORD_LEN] = {
     0xfe5946c8, 0x680bae8f, 0xa4a28b0e, 0x18674f89, 0x7c0bd95f, 0xd0c95464, 0x2642e1e7, 0x5e0df9f6, 0x797c1d16, 0xe21189e9, 0x254cdf05, 0x00000066,
     0x2ea205a0, 0x58fd17ad, 0x87393670, 0x6c7aec2c, 0xe8e52a04, 0xcebacca4, 0x10554261, 0x03eab69f, 0x51413bfd, 0x9dfa80cd, 0x1398b610, 0x0000006b,
     0x52a0a98a, 0x37340d7c, 0x80099cd6, 0xafceea56, 0x07341ddb, 0xcabd07c1, 0xd672acf8, 0xbc78bf4e, 0x26e680ba, 0x5cca7619, 0xd278643a, 0x0000004c,
@@ -368,7 +370,7 @@ uint32_t BM_359[359 * 12] = {
     0xfb80eaa6, 0xa13d3c28, 0xc9eae1d6, 0xe3de289b, 0x8519de76, 0x21aa3af3, 0x5db63fbf, 0x4ceaad50, 0x2f721507, 0xdfdb7ac8, 0x5460e1c6, 0x0000004f};
 
 // ECC359 多项式基转正规基映射表
-uint32_t MB_359[359 * 12] = {
+uint32_t MB_359[359 * BN_WORD_LEN] = {
     0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x0000007f,
     0x3043bb5d, 0xb7612546, 0xf324d793, 0x3c89dd3d, 0xb13185c3, 0xd9c82ce1, 0x75337794, 0x24350127, 0x85d464a4, 0x123c71c0, 0x6d5cbca4, 0x0000005b,
     0x608776bb, 0x6ec24a8c, 0xe649af27, 0x7913ba7b, 0x62630b86, 0xb39059c3, 0xea66ef29, 0x486a024e, 0x0ba8c948, 0x2478e381, 0xdab97948, 0x00000036,
@@ -730,7 +732,7 @@ uint32_t MB_359[359 * 12] = {
     0xaea3a47e, 0xb7e94f15, 0x8ef9e615, 0x74a3626f, 0x0030b559, 0xa5d156fd, 0xb260db6a, 0x48ab3422, 0x4aebacca, 0x00064980, 0xe7e640af, 0x0000006b};
 
 // ECC281 多项式基转成正规机
-uint32_t MB_281[281 * 12] = {
+uint32_t MB_281[281 * BN_WORD_LEN] = {
     0xffffffff,
     0xffffffff,
     0xffffffff,
@@ -4106,7 +4108,7 @@ uint32_t MB_281[281 * 12] = {
 };
 
 // ECC281 正规基转成多项式基
-uint32_t BM_281[281 * 12] = {
+uint32_t BM_281[281 * BN_WORD_LEN] = {
     0xbb4603ef,
     0x7529529e,
     0xeb6e8a76,
@@ -7481,18 +7483,17 @@ uint32_t BM_281[281 * 12] = {
     0x00000000,
 };
 
-void cc_basis_convert(const cc_bn_digit_t *src, int bn_word_len, const cc_bn_digit_t *maps, cc_bn_digit_t *dst)
+void cc_basis_convert(const cc_bn_digit_t *src, size_t bn_word_len, const cc_bn_digit_t *maps, cc_bn_digit_t *dst)
 {
-    int i, j;
-    cc_bn_digit_t x;
+    size_t i;
     cc_bn_set_zero(dst, bn_word_len);
 
-    uint32_t bit_len = cc_bn_bit_len(src, bn_word_len);
+    size_t bit_len = cc_bn_bit_len(src, bn_word_len);
     for (i = 0; i < bit_len; i++)
     {
         if (cc_bn_get_bit(src, i) == 1)
         {
-            cc_bn_xor(dst, maps + i * bn_word_len, bn_word_len, dst);
+            cc_bn_xor(dst, maps + i * BN_WORD_LEN, bn_word_len, dst);
         }
     }
 }
