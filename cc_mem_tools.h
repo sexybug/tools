@@ -54,6 +54,8 @@ static inline uint64_t cc_swap_u64(uint64_t x)
 #define CC_W32_SWAP(addr, value) CC_W32(addr, cc_swap_u32(value))
 #define CC_W64_SWAP(addr, value) CC_W64(addr, cc_swap_u64(value))
 
+void cc_swap_u32_array(uint32_t *array, size_t word_size);
+
 void cc_memset_u32(uint32_t *dest, uint32_t value, size_t word_size);
 
 void cc_memcpy_u32(uint32_t *dest, const uint32_t *src, size_t word_size);

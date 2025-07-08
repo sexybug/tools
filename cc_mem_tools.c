@@ -1,6 +1,15 @@
 
 #include "cc_mem_tools.h"
 
+void cc_swap_u32_array(uint32_t *array, size_t word_size)
+{
+    size_t i;
+    for (i = 0; i < word_size; i++)
+    {
+        array[i] = cc_swap_u32(array[i]);
+    }
+}
+
 void cc_memset_u32(uint32_t *dest, uint32_t value, size_t word_size)
 {
     size_t i;
