@@ -15,6 +15,14 @@ void cc_u8_to_bn(const uint8_t *src, size_t byte_len, size_t bn_word_len, cc_bn_
 
 void cc_bn_to_u8(const cc_bn_digit_t *bn, size_t bn_word_len, uint8_t *dst);
 
+// bn will be filled with the minimum number of words needed to fit the byte array
+//  return the number of words used in bn
+size_t cc_u8_to_bn_fit(const uint8_t *src, size_t byte_len, cc_bn_digit_t *bn);
+
+// dst will be filled with the minimum number of bytes needed to fit the bn
+//  return the number of bytes used in dst
+size_t cc_bn_to_u8_fit(const cc_bn_digit_t *bn, size_t bn_word_len, uint8_t *dst);
+
 // set bn=0
 void cc_bn_set_zero(cc_bn_digit_t *bn, size_t bn_word_len);
 
@@ -32,7 +40,7 @@ void cc_bn_xor(const cc_bn_digit_t *src1, const cc_bn_digit_t *src2, size_t bn_w
 cc_bn_digit_t cc_bn_get_bit(const cc_bn_digit_t *bn, size_t bit_index);
 
 size_t cc_bn_bit_len(const cc_bn_digit_t *bn, size_t bn_word_len);
-
+size_t cc_bn_byte_len(const cc_bn_digit_t *bn, size_t bn_word_len);
 size_t cc_bn_word_len(const cc_bn_digit_t *bn, size_t bn_word_len);
 
 // rigth move 1 bit, bn_out = bn_in / 2

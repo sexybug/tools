@@ -3,6 +3,14 @@
 void cc_u8_to_bn(const uint8_t *src, size_t byte_len, size_t bn_word_len, cc_bn_digit_t *bn)
 {
     int i, j;
+
+    // 检查是否有足够空间存储数据
+    if (byte_len > bn_word_len * CC_BN_DIGIT_BYTES)
+    {
+        return;
+    }
+
+    // 前方需要补多少字节的0
     int zero_pad_len = bn_word_len * CC_BN_DIGIT_BYTES - byte_len;
 
     for (i = 0; i < zero_pad_len / CC_BN_DIGIT_BYTES; i++)
@@ -44,6 +52,45 @@ void cc_bn_to_u8(const cc_bn_digit_t *bn, size_t bn_word_len, uint8_t *dst)
     {
         dst[i] = (bn[bn_word_len - 1 - i / CC_BN_DIGIT_BYTES] >> (CC_BN_DIGIT_BITS - 8 - (i % CC_BN_DIGIT_BYTES) * 8)) & 0xFF;
     }
+}
+
+//bn will be filled with the minimum number of words needed to fit the byte array
+// return the number of words used in bn
+size_t cc_u8_to_bn_fit(const uint8_t *src, size_t byte_len, cc_bn_digit_t *bn)
+{
+    size_t bn_word_len = (byte_len + CC_BN_DIGIT_BYTES - 1) / CC_BN_DIGIT_BYTES;
+    cc_u8_to_bn(src, byte_len, bn_word_len, bn);
+    return bn_word_len;
+}
+
+//dst will be filled with the minimum number of bytes needed to fit the bn
+// return the number of bytes used in dst
+size_t cc_bn_to_u8_fit(const cc_bn_digit_t *bn, size_t bn_word_len, uint8_t *dst)
+{
+    int i, j;
+    size_t n = 0;
+    uint8_t tmp;
+
+    for (i = bn_word_len - 1; i >= 0; i--)
+    {
+        if ((bn[i] != 0) || (n > 0)) // Skip leading zeros
+        {
+            for (j = CC_BN_DIGIT_BITS - 8; j >= 0; j -= 8)
+            {
+                tmp = (bn[i] >> j) & 0xFF;
+                if (tmp != 0 || n > 0) // Skip leading zeros
+                {
+                    dst[n++] = (uint8_t)tmp;
+                }
+            }
+        }
+    }
+
+    if (n == 0) // If all digits are zero, return at least one byte
+    {
+        dst[n++] = 0;
+    }
+    return n; // Return the number of bytes written
 }
 
 // set bn=0
@@ -140,6 +187,28 @@ size_t cc_bn_bit_len(const cc_bn_digit_t *bn, size_t bn_word_len)
     }
     return 0; // If all digits are zero, return 0 bits
 }
+
+size_t cc_bn_byte_len(const cc_bn_digit_t *bn, size_t bn_word_len)
+{
+    int i, j;
+    cc_bn_digit_t tmp;
+    for (i = bn_word_len - 1; i >= 0; i--)
+    {
+        if (bn[i] != 0)
+        {
+            j = 0;
+            tmp = bn[i];
+            while (tmp != 0)
+            {
+                tmp >>= 8;
+                j++;
+            }
+            return i * CC_BN_DIGIT_BYTES + j;
+        }
+    }
+    return 0; // If all digits are zero, return 0 bytes
+}
+
 size_t cc_bn_word_len(const cc_bn_digit_t *bn, size_t bn_word_len)
 {
     int i;
